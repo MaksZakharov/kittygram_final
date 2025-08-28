@@ -1,0 +1,23 @@
+# Игнорируем виртуальные окружения и env
+venv
+.env
+
+# Кэш и служебные файлы Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Git и IDE
+.git
+.gitignore
+.idea
+.vscode
+
+# Docker артефакты
+Dockerfile
+.dockerignore
+
+# Статика и медиа (не храним внутри образа)
+static/
+media/

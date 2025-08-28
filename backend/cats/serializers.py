@@ -1,3 +1,5 @@
+"""Сериализаторы для приложения cats."""
+
 import base64
 import datetime as dt
 
@@ -9,10 +11,14 @@ from .models import Achievement, AchievementCat, Cat
 
 
 class Hex2NameColor(serializers.Field):
+    """Кастомное поле для преобразования HEX-кода цвета в название."""
+
     def to_representation(self, value):
+        """Вернуть строковое значение цвета."""
         return value
 
     def to_internal_value(self, data):
+        """Преобразовать HEX-код в название цвета или вызвать ошибку."""
         try:
             data = webcolors.hex_to_name(data)
         except ValueError:
@@ -21,25 +27,32 @@ class Hex2NameColor(serializers.Field):
 
 
 class AchievementSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Achievement."""
+
     achievement_name = serializers.CharField(source='name')
 
     class Meta:
+        """Метаданные сериализатора Achievement."""
+
         model = Achievement
         fields = ('id', 'achievement_name')
 
 
 class Base64ImageField(serializers.ImageField):
+    """Кастомное поле для загрузки изображений в формате Base64."""
+
     def to_internal_value(self, data):
+        """Преобразовать строку Base64 в файл изображения."""
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
-
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-
         return super().to_internal_value(data)
 
 
 class CatSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Cat с расширенной логикой."""
+
     achievements = AchievementSerializer(required=False, many=True)
     color = Hex2NameColor()
     age = serializers.SerializerMethodField()
@@ -50,6 +63,8 @@ class CatSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Метаданные сериализатора Cat."""
+
         model = Cat
         fields = (
             'id', 'name', 'color', 'birth_year', 'achievements',
@@ -58,14 +73,17 @@ class CatSerializer(serializers.ModelSerializer):
         read_only_fields = ('owner',)
 
     def get_image_url(self, obj):
+        """Вернуть URL изображения кота, если оно есть."""
         if obj.image:
             return obj.image.url
         return None
 
     def get_age(self, obj):
+        """Рассчитать возраст кота на основе года рождения."""
         return dt.datetime.now().year - obj.birth_year
 
     def create(self, validated_data):
+        """Создать объект Cat с учётом достижений."""
         if 'achievements' not in self.initial_data:
             cat = Cat.objects.create(**validated_data)
             return cat
@@ -81,6 +99,7 @@ class CatSerializer(serializers.ModelSerializer):
         return cat
 
     def update(self, instance, validated_data):
+        """Обновить объект Cat и его достижения."""
         instance.name = validated_data.get('name', instance.name)
         instance.color = validated_data.get('color', instance.color)
         instance.birth_year = validated_data.get(
