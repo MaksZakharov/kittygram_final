@@ -158,7 +158,7 @@ jobs:
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate --noinput
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
             sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/backend_static/. /backend_static/static/
-            sudo docker compose -f docker-compose.production.yml exec frontend cp -r /usr/share/nginx/html/. /static/static/
+            sudo docker compose -f docker-compose.production.yml exec frontend cp -r /app/build/. /static/static/
 
   send_message:
     runs-on: ubuntu-latest
