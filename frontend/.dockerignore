@@ -1,2 +1,21 @@
+# зависимости
 node_modules
+npm-debug.log
+yarn-error.log
+
+# сборка
 build
+
+# env файлы
+.env
+.env.*
+
+# Git и IDE
+.git
+.gitignore
+.idea
+.vscode
+
+# Docker файлы
+Dockerfile
+.dockerignore

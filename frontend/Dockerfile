@@ -1,13 +1,21 @@
-FROM node:18
+FROM node:18 AS build
+
 WORKDIR /app
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-
+COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
 RUN npm run build
-RUN npm install --global http-server
 
-CMD ["npx", "-y", "http-server", "-p", "8000", "/app/build"]
+# ------------------------
+# production stage
+FROM nginx:1.22.1
+
+# Копируем билд React в стандартное место для Nginx
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
