@@ -36,8 +36,8 @@ jobs:
           POSTGRES_USER: kittygram_user
           POSTGRES_PASSWORD: kittygram_password
           POSTGRES_DB: kittygram
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           python -m flake8 backend/
