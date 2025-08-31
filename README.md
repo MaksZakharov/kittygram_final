@@ -1,80 +1,96 @@
 # Kittygram
 
-[![Kittygram CI/CD](https://github.com/MaksZakharov/kittygram_final/actions/workflows/main.yml/badge.svg)](https://github.com/MaksZakharov/kittygram_final/actions/workflows/main.yml)
+Kittygram — это социальная сеть для обмена фотографиями котиков, созданная в рамках обучения на курсе **Python-разработчик+** (Яндекс Практикум).  
+Проект разворачивается в контейнерах Docker и поддерживает полный цикл CI/CD.
 
-## Описание проекта
-**Kittygram** — это социальный сервис для любителей кошек. 
+![Kittygram](/assets/img/kittygram.png)
 
-Пользователи могут:
-- Создавать профили своих питомцев с фотографиями.
-- Указывать достижения котиков (например, «Поймал мышь», «Самый пушистый»).
-- Просматривать профили других пользователей и их питомцев.
+---
 
-Проект реализован в рамках обучения на Яндекс.Практикуме и демонстрирует навыки работы с Django, Docker и CI/CD.
+## Описание
 
-## Стек технологий
-- Python 3.10
-- Django 3.2
-- Django REST Framework
-- PostgreSQL 13
-- Gunicorn
-- Nginx
-- Docker & Docker Compose
-- GitHub Actions (CI/CD)
+Платформа позволяет пользователям:
+- Регистрироваться и авторизоваться
+- Загружать фотографии своих питомцев
+- Просматривать галерею котиков
+- Ставить лайки
+- Добавлять описания и теги
 
-## Установка и запуск
-### 1. Клонирование репозитория
+Проект развернут на сервере с использованием Docker, GitHub Actions и Nginx.
+
+---
+
+## Технологии
+
+- Python 3.10  
+- Django 3.2  
+- Django REST Framework  
+- PostgreSQL  
+- Docker & Docker Compose  
+- Nginx + Gunicorn  
+- GitHub Actions (CI/CD)  
+
+---
+
+## Что сделал
+
+- Реализовал модели пользователей и котиков  
+- Настроил сериализаторы и API для работы с котиками  
+- Подключил базу данных PostgreSQL через Docker  
+- Настроил статику и медиа-файлы через Nginx  
+- Настроил Gunicorn для продакшн-развёртывания  
+- Настроил CI/CD с GitHub Actions: тесты, линтер, автодеплой на сервер  
+- Оформили контейнеризацию всего проекта (`docker-compose`)  
+
+---
+
+## Как запустить проект локально
+
+### 1. Клонировать репозиторий
 ```bash
-git clone git@github.com:MaksZakharov/kittygram_final.git
+git clone git@github.com:<ваш_логин>/kittygram_final.git
 cd kittygram_final
 ```
 
-### 2. Настройка переменных окружения
-Создайте файл `.env` в корне проекта. Пример содержимого:
-
-```env
-# Настройки PostgreSQL
+### 2. Создать файл `.env`
+```dotenv
+SECRET_KEY=<django_secret_key>
+DEBUG=False
+ALLOWED_HOSTS=127.0.0.1,localhost
 POSTGRES_DB=kittygram
 POSTGRES_USER=kittygram_user
 POSTGRES_PASSWORD=kittygram_password
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-
-# Django
-SECRET_KEY=секретный_ключ_django
-DEBUG=False
-ALLOWED_HOSTS=127.0.0.1,localhost,example.com
+DB_HOST=db
+DB_PORT=5432
 ```
 
-> ⚠️ Значения `SECRET_KEY` и `POSTGRES_PASSWORD` должны быть уникальными и безопасными.
-
-### 3. Запуск контейнеров
-Для локального запуска используйте:
+### 3. Собрать и запустить контейнеры
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-Для боевого запуска на сервере:
+### 4. Выполнить миграции и собрать статику
 ```bash
-docker compose -f docker-compose.production.yml up -d
-```
-
-### 4. Миграции и статика
-После запуска контейнеров выполните:
-```bash
-docker compose exec backend python manage.py migrate --noinput
+docker compose exec backend python manage.py migrate
 docker compose exec backend python manage.py collectstatic --noinput
 ```
 
+### 5. Создать суперпользователя
+```bash
+docker compose exec backend python manage.py createsuperuser
+```
+
+---
+
 ## CI/CD
-- При push в любую ветку запускаются тесты (flake8, pytest).
-- При push в `main` автоматически выполняется:
-  - сборка Docker-образов для backend, frontend и gateway;
-  - публикация образов на Docker Hub;
-  - деплой проекта на удалённый сервер;
-  - выполнение миграций и сборка статики;
-  - уведомление в Telegram о завершении деплоя.
+
+- При пуше в ветку `main` автоматически запускаются тесты и линтер  
+- После успешной проверки проект деплоится на сервер  
+- Используются **GitHub Actions**, **Docker Hub**, **Nginx** и **Gunicorn**  
+
+---
 
 ## Автор
-- **Максим Захаров** — [MaksZakharov](https://github.com/MaksZakharov)
 
+**Макс Захаров**  
+Python backend developer (в процессе обучения)
